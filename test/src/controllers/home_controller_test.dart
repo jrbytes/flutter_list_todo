@@ -10,10 +10,24 @@ main() {
   final repository = TodoRepositoryMock();
   final controller = HomeController(repository);
 
+  tearDown(() {
+    controller.state = HomeState.start;
+  });
+
   test('deve preencher variável todos', () async {
     when(() => repository.fetchTodos()).thenAnswer((_) async => [TodoModel()]);
 
+    expect(controller.state, HomeState.start);
     await controller.start();
+    expect(controller.state, HomeState.success);
     expect(controller.todos.isNotEmpty, true);
+  });
+
+  test('deve modificar o estado para error se a requisição falhar', () async {
+    when(() => repository.fetchTodos()).thenThrow(Exception());
+
+    expect(controller.state, HomeState.start);
+    await controller.start();
+    expect(controller.state, HomeState.error);
   });
 }
