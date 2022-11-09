@@ -11,23 +11,23 @@ main() {
   final controller = HomeController(repository);
 
   tearDown(() {
-    controller.state = HomeState.start;
+    controller.state.value = HomeState.start;
   });
 
   test('deve preencher variável todos', () async {
     when(() => repository.fetchTodos()).thenAnswer((_) async => [TodoModel()]);
 
-    expect(controller.state, HomeState.start);
+    expect(controller.state.value, HomeState.start);
     await controller.start();
-    expect(controller.state, HomeState.success);
+    expect(controller.state.value, HomeState.success);
     expect(controller.todos.isNotEmpty, true);
   });
 
   test('deve modificar o estado para error se a requisição falhar', () async {
     when(() => repository.fetchTodos()).thenThrow(Exception());
 
-    expect(controller.state, HomeState.start);
+    expect(controller.state.value, HomeState.start);
     await controller.start();
-    expect(controller.state, HomeState.error);
+    expect(controller.state.value, HomeState.error);
   });
 }
